@@ -740,9 +740,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../app/bootstrap.php';
 
 use App\Core\App;
+use App\Core\Request; // Added
 
 // Create application instance
 $app = new App(__DIR__ . '/..');
+
+$request = new Request(); // Added
 
 // Register global middleware
 $app->use([\App\Middleware\SecurityHeaders::class, 'handle']);
@@ -752,6 +755,11 @@ if (env('CSRF_ENABLED', true)) {
 }
 
 $app->use([\App\Core\Auth::class, 'loadUser']);
+
+// Conditionally add AdminOnly middleware for admin routes
+if ($request->path === 'admin' || str_starts_with($request->path, 'admin/')) {
+    $app->use([\App\Middleware\AdminOnly::class, 'handle']);
+}
 
 // Run the application
 $app->run();
@@ -1998,10 +2006,7 @@ class CSRF
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
                     'path' => $req->path
                 ]);
-
-                http_response_code(403);
-                echo 'CSRF token mismatch';
-                exit;
+                abort(403, 'CSRF token mismatch');
             }
         }
 
@@ -2009,6 +2014,7 @@ class CSRF
     }
 }
 PHP
+
 
 success "Core classes created"
 
@@ -2234,7 +2240,7 @@ fi
 info "Creating views..."
 
 # Main layout with GLOBAL AUTO-INJECT STYLING
-cat > app/layout.php <<'HTML'
+cat > app/layout.php <<'LAYOUT_PHP'
 <?php
 /**
  * Global Layout - Bastion PHP
@@ -2276,48 +2282,69 @@ $bodyClass = $useTailwind ? 'class="bg-black text-white antialiased"' : '';
     <?php if ($useTailwind): ?>
         <!-- Tailwind Navigation -->
         <nav class="fixed w-full top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
-    <!-- Navigation -->
-    <nav class="fixed w-full top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-8">
-                    <a href="/" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                        Bastion PHP
-                    </a>
-                    <div class="hidden md:flex items-center space-x-4">
-                        <a href="/" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
-                            Home
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-8">
+                        <a href="/" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                            Bastion PHP
                         </a>
-                        <?php if (isset($GLOBALS['auth_user'])): ?>
-                            <?php if ($GLOBALS['auth_user']['role'] === 'admin'): ?>
-                                <a href="/admin" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
-                                    Admin
-                                </a>
+                        <div class="hidden md:flex items-center space-x-4">
+                            <a href="/" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
+                                Home
+                            </a>
+                            <?php if (isset($GLOBALS['auth_user'])): ?>
+                                <?php if ($GLOBALS['auth_user']['role'] === 'admin'): ?>
+                                    <a href="/admin" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
+                                        Admin
+                                    </a>
+                                <?php endif; ?>
                             <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <?php if (isset($GLOBALS['auth_user'])): ?>
+                            <a href="/profile" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
+                                <?= e($GLOBALS['auth_user']['name']) ?>
+                            </a>
+                            <a href="/logout" class="bg-white/10 hover:bg-white/20 transition-colors px-4 py-2 rounded-lg text-sm font-medium">
+                                Logout
+                            </a>
+                        <?php else: ?>
+                            <a href="/login" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
+                                Login
+                            </a>
+                            <a href="/register" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-blue-500/50">
+                                Get Started
+                            </a>
                         <?php endif; ?>
                     </div>
                 </div>
-
-                <div class="flex items-center space-x-4">
-                    <?php if (isset($GLOBALS['auth_user'])): ?>
-                        <a href="/profile" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
-                            <?= e($GLOBALS['auth_user']['name']) ?>
-                        </a>
-                        <a href="/logout" class="bg-white/10 hover:bg-white/20 transition-colors px-4 py-2 rounded-lg text-sm font-medium">
-                            Logout
-                        </a>
-                    <?php else: ?>
-                        <a href="/login" class="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-md text-sm font-medium">
-                            Login
-                        </a>
-                        <a href="/register" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-blue-500/50">
-                            Get Started
-                        </a>
-                    <?php endif; ?>
-                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    <?php else: ?>
+        <!-- Fallback Navigation -->
+        <header>
+            <nav>
+                <div class="container">
+                    <a href="/">Bastion PHP</a>
+                    <div>
+                        <a href="/">Home</a>
+                        <?php if (isset($GLOBALS['auth_user'])): ?>
+                            <?php if ($GLOBALS['auth_user']['role'] === 'admin'): ?>
+                                <a href="/admin">Admin</a>
+                            <?php endif; ?>
+                            <a href="/profile"><?= e($GLOBALS['auth_user']['name']) ?></a>
+                            <a href="/logout">Logout</a>
+                        <?php else: ?>
+                            <a href="/login">Login</a>
+                            <a href="/register">Register</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    <?php endif; ?>
 
     <!-- Main Content -->
     <main class="pt-16 min-h-screen">
@@ -2484,6 +2511,7 @@ if [ "$WITH_TAILWIND" = true ]; then
     </div>
 </section>
 HTML
+
 else
     cat > app/page.php <<'HTML'
 <?php $title = 'Welcome to Bastion PHP'; ?>
@@ -2716,7 +2744,7 @@ return [
         })();
 
         // Wrap with layout
-        $layoutFile = __DIR__ . '/../views/layouts/main.php';
+        $layoutFile = __DIR__ . '/../layout.php';
         if (file_exists($layoutFile)) {
             require $layoutFile;
         } else {
@@ -2924,7 +2952,7 @@ return [
         })();
 
         // Wrap with layout
-        $layoutFile = __DIR__ . '/../views/layouts/main.php';
+        $layoutFile = __DIR__ . '/../layout.php';
         if (file_exists($layoutFile)) {
             require $layoutFile;
         } else {
@@ -3391,11 +3419,7 @@ PHP
     # Admin dashboard (main page)
     cat > app/admin/page.php <<'PHP'
 <?php
-use App\Middleware\AdminOnly;
 use App\Core\DB;
-
-// Require admin access
-AdminOnly::handle(new \App\Core\Request(), function($req) {});
 
 $title = 'Admin Dashboard';
 
@@ -3410,172 +3434,89 @@ $recentUsers = DB::table('users')
     ->get();
 ?>
 
-<style>
-.admin-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-white mb-6">🛡️ Admin Dashboard</h1>
 
-.stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.stat-card h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.875rem;
-    opacity: 0.9;
-}
-
-.stat-card .number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.admin-table th {
-    background: #f7fafc;
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #4a5568;
-    border-bottom: 2px solid #e2e8f0;
-}
-
-.admin-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.admin-table tr:last-child td {
-    border-bottom: none;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-admin {
-    background: #fef5e7;
-    color: #d68910;
-}
-
-.badge-user {
-    background: #eaf2f8;
-    color: #2874a6;
-}
-
-.admin-nav {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
-
-.admin-nav a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    margin-right: 0.5rem;
-    color: #4a5568;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.2s;
-}
-
-.admin-nav a:hover {
-    background: #edf2f7;
-    color: #2d3748;
-}
-
-.admin-nav a.active {
-    background: #667eea;
-    color: white;
-}
-</style>
-
-<h1>🛡️ Admin Dashboard</h1>
-
-<div class="admin-nav">
-    <a href="/admin" class="active">Dashboard</a>
-    <a href="/admin/users">Users</a>
-    <a href="/admin/database">Database</a>
-    <a href="/admin/settings">Settings</a>
-    <a href="/" style="float: right;">← Back to Site</a>
-</div>
-
-<div class="admin-grid">
-    <div class="stat-card">
-        <h3>Total Users</h3>
-        <p class="number"><?= $userCount ?></p>
+    <div class="bg-gray-800 rounded-lg shadow-lg p-4 mb-6 flex space-x-4">
+        <a href="/admin" class="px-4 py-2 rounded-md bg-blue-600 text-white font-medium">Dashboard</a>
+        <a href="/admin/users" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Users</a>
+        <a href="/admin/database" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Database</a>
+        <a href="/admin/settings" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Settings</a>
+        <a href="/" class="ml-auto px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">← Back to Site</a>
     </div>
 
-    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-        <h3>Administrators</h3>
-        <p class="number"><?= $adminCount ?></p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-md p-6 text-white">
+            <h3 class="text-sm font-semibold opacity-90 mb-2">Total Users</h3>
+            <p class="text-4xl font-bold"><?= $userCount ?></p>
+        </div>
+
+        <div class="bg-gradient-to-r from-pink-500 to-red-600 rounded-lg shadow-md p-6 text-white">
+            <h3 class="text-sm font-semibold opacity-90 mb-2">Administrators</h3>
+            <p class="text-4xl font-bold"><?= $adminCount ?></p>
+        </div>
+
+        <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-lg shadow-md p-6 text-white">
+            <h3 class="text-sm font-semibold opacity-90 mb-2">Database Tables</h3>
+            <p class="text-4xl font-bold"><?= count($pdo->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll()) ?></p>
+        </div>
     </div>
 
-    <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-        <h3>Database Tables</h3>
-        <p class="number"><?= count($pdo->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll()) ?></p>
+    <h2 class="text-2xl font-bold text-white mb-4">Recent Users</h2>
+    <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        ID
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Name
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Email
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Role
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Created
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($recentUsers as $user): ?>
+                <tr>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= e($user['id']) ?>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= e($user['name']) ?>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= e($user['email']) ?>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                            <span aria-hidden class="absolute inset-0 <?= $user['role'] === 'admin' ? 'bg-yellow-200' : 'bg-blue-200' ?> opacity-50 rounded-full"></span>
+                            <span class="relative text-<?= $user['role'] === 'admin' ? 'yellow' : 'blue' ?>-800"><?= e(ucfirst($user['role'])) ?></span>
+                        </span>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= date('Y-m-d H:i', $user['created_at']) ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
 </div>
-
-<h2>Recent Users</h2>
-<table class="admin-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Created</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($recentUsers as $user): ?>
-        <tr>
-            <td><?= e($user['id']) ?></td>
-            <td><?= e($user['name']) ?></td>
-            <td><?= e($user['email']) ?></td>
-            <td>
-                <span class="badge badge-<?= $user['role'] ?>">
-                    <?= e(ucfirst($user['role'])) ?>
-                </span>
-            </td>
-            <td><?= date('Y-m-d H:i', $user['created_at']) ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
 PHP
 
     # User management page
     cat > app/admin/users/page.php <<'PHP'
 <?php
-use App\Middleware\AdminOnly;
 use App\Core\DB;
-
-// Require admin access
-AdminOnly::handle(new \App\Core\Request(), function($req) {});
 
 $title = 'User Management';
 
@@ -3583,170 +3524,96 @@ $title = 'User Management';
 $users = DB::table('users')->get();
 ?>
 
-<style>
-/* Reuse admin styles */
-.admin-nav {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-white mb-6">👥 User Management</h1>
 
-.admin-nav a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    margin-right: 0.5rem;
-    color: #4a5568;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.2s;
-}
+    <div class="bg-gray-800 rounded-lg shadow-lg p-4 mb-6 flex space-x-4">
+        <a href="/admin" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Dashboard</a>
+        <a href="/admin/users" class="px-4 py-2 rounded-md bg-blue-600 text-white font-medium">Users</a>
+        <a href="/admin/database" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Database</a>
+        <a href="/admin/settings" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Settings</a>
+        <a href="/" class="ml-auto px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">← Back to Site</a>
+    </div>
 
-.admin-nav a:hover {
-    background: #edf2f7;
-    color: #2d3748;
-}
+    <p class="text-gray-300 mb-4">
+        <strong>Total Users:</strong> <?= count($users) ?>
+    </p>
 
-.admin-nav a.active {
-    background: #667eea;
-    color: white;
-}
+    <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        ID
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Name
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Email
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Role
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Created
+                    </th>
+                    <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $user): ?>
+                <tr>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= e($user['id']) ?>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= e($user['name']) ?>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= e($user['email']) ?>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                            <span aria-hidden class="absolute inset-0 <?= $user['role'] === 'admin' ? 'bg-yellow-200' : 'bg-blue-200' ?> opacity-50 rounded-full"></span>
+                            <span class="relative text-<?= $user['role'] === 'admin' ? 'yellow' : 'blue' ?>-800"><?= e(ucfirst($user['role'])) ?></span>
+                        </span>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <?= date('Y-m-d H:i', $user['created_at']) ?>
+                    </td>
+                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white">
+                        <button
+                            hx-get="/api/admin/users/<?= $user['id'] ?>/edit"
+                            hx-target="#editModal"
+                            class="px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium mr-2">
+                            Edit
+                        </button>
+                        <button
+                            hx-delete="/api/admin/users/<?= $user['id'] ?>"
+                            hx-confirm="Are you sure you want to delete this user?"
+                            hx-target="closest tr"
+                            hx-swap="outerHTML"
+                            class="px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-medium">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.admin-table th {
-    background: #f7fafc;
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #4a5568;
-    border-bottom: 2px solid #e2e8f0;
-}
-
-.admin-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.admin-table tr:last-child td {
-    border-bottom: none;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.badge-admin {
-    background: #fef5e7;
-    color: #d68910;
-}
-
-.badge-user {
-    background: #eaf2f8;
-    color: #2874a6;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.75rem;
-    font-size: 0.875rem;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-block;
-    margin-right: 0.5rem;
-}
-
-.btn-danger {
-    background: #e53e3e;
-    color: white;
-}
-
-.btn-primary {
-    background: #667eea;
-    color: white;
-}
-</style>
-
-<h1>👥 User Management</h1>
-
-<div class="admin-nav">
-    <a href="/admin">Dashboard</a>
-    <a href="/admin/users" class="active">Users</a>
-    <a href="/admin/database">Database</a>
-    <a href="/admin/settings">Settings</a>
-    <a href="/" style="float: right;">← Back to Site</a>
+    <div id="editModal"></div>
 </div>
-
-<p style="margin-bottom: 1rem;">
-    <strong>Total Users:</strong> <?= count($users) ?>
-</p>
-
-<table class="admin-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Created</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($users as $user): ?>
-        <tr>
-            <td><?= e($user['id']) ?></td>
-            <td><?= e($user['name']) ?></td>
-            <td><?= e($user['email']) ?></td>
-            <td>
-                <span class="badge badge-<?= $user['role'] ?>">
-                    <?= e(ucfirst($user['role'])) ?>
-                </span>
-            </td>
-            <td><?= date('Y-m-d H:i', $user['created_at']) ?></td>
-            <td>
-                <button
-                    hx-get="/api/admin/users/<?= $user['id'] ?>/edit"
-                    hx-target="#editModal"
-                    class="btn-sm btn-primary">
-                    Edit
-                </button>
-                <button
-                    hx-delete="/api/admin/users/<?= $user['id'] ?>"
-                    hx-confirm="Are you sure you want to delete this user?"
-                    hx-target="closest tr"
-                    hx-swap="outerHTML"
-                    class="btn-sm btn-danger">
-                    Delete
-                </button>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-
-<div id="editModal"></div>
 PHP
 
     # Database browser page
     cat > app/admin/database/page.php <<'PHP'
 <?php
-use App\Middleware\AdminOnly;
 use App\Core\DB;
-
-// Require admin access
-AdminOnly::handle(new \App\Core\Request(), function($req) {});
 
 $title = 'Database Browser';
 
@@ -3772,307 +3639,163 @@ if ($selectedTable) {
 }
 ?>
 
-<style>
-/* Reuse admin styles */
-.admin-nav {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-white mb-6">🗄️ Database Browser</h1>
 
-.admin-nav a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    margin-right: 0.5rem;
-    color: #4a5568;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.2s;
-}
+    <div class="bg-gray-800 rounded-lg shadow-lg p-4 mb-6 flex space-x-4">
+        <a href="/admin" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Dashboard</a>
+        <a href="/admin/users" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Users</a>
+        <a href="/admin/database" class="px-4 py-2 rounded-md bg-blue-600 text-white font-medium">Database</a>
+        <a href="/admin/settings" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Settings</a>
+        <a href="/" class="ml-auto px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">← Back to Site</a>
+    </div>
 
-.admin-nav a:hover {
-    background: #edf2f7;
-    color: #2d3748;
-}
+    <h2 class="text-2xl font-bold text-white mb-4">Tables</h2>
+    <div class="bg-gray-800 rounded-lg shadow-lg p-4 mb-6 flex flex-wrap gap-2">
+        <?php foreach ($tables as $table): ?>
+            <a href="?table=<?= urlencode($table) ?>" class="px-4 py-2 rounded-md <?= $table === $selectedTable ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white' ?>">
+                <?= e($table) ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
 
-.admin-nav a.active {
-    background: #667eea;
-    color: white;
-}
+    <?php if ($selectedTable): ?>
+        <h2 class="text-2xl font-bold text-white mb-4">Table: <?= e($selectedTable) ?></h2>
+        <p class="text-gray-300 mb-4"><strong>Records:</strong> <?= count($tableData) ?> (showing first 50)</p>
 
-.table-list {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
-
-.table-list a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-    background: #edf2f7;
-    color: #4a5568;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.2s;
-}
-
-.table-list a:hover,
-.table-list a.active {
-    background: #667eea;
-    color: white;
-}
-
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-    font-size: 0.875rem;
-}
-
-.admin-table th {
-    background: #f7fafc;
-    padding: 0.75rem;
-    text-align: left;
-    font-weight: 600;
-    color: #4a5568;
-    border-bottom: 2px solid #e2e8f0;
-}
-
-.admin-table td {
-    padding: 0.75rem;
-    border-bottom: 1px solid #e2e8f0;
-    max-width: 300px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.admin-table tr:last-child td {
-    border-bottom: none;
-}
-</style>
-
-<h1>🗄️ Database Browser</h1>
-
-<div class="admin-nav">
-    <a href="/admin">Dashboard</a>
-    <a href="/admin/users">Users</a>
-    <a href="/admin/database" class="active">Database</a>
-    <a href="/admin/settings">Settings</a>
-    <a href="/" style="float: right;">← Back to Site</a>
-</div>
-
-<h2>Tables</h2>
-<div class="table-list">
-    <?php foreach ($tables as $table): ?>
-        <a href="?table=<?= urlencode($table) ?>" class="<?= $table === $selectedTable ? 'active' : '' ?>">
-            <?= e($table) ?>
-        </a>
-    <?php endforeach; ?>
-</div>
-
-<?php if ($selectedTable): ?>
-    <h2>Table: <?= e($selectedTable) ?></h2>
-    <p><strong>Records:</strong> <?= count($tableData) ?> (showing first 50)</p>
-
-    <?php if (!empty($tableData)): ?>
-        <div style="overflow-x: auto;">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <?php foreach ($columns as $column): ?>
-                            <th><?= e($column) ?></th>
-                        <?php endforeach; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($tableData as $row): ?>
+        <?php if (!empty($tableData)): ?>
+            <div class="bg-gray-800 rounded-lg shadow-md overflow-x-auto">
+                <table class="min-w-full leading-normal">
+                    <thead>
                         <tr>
-                            <?php foreach ($row as $value): ?>
-                                <td title="<?= e($value) ?>"><?= e($value) ?></td>
+                            <?php foreach ($columns as $column): ?>
+                                <th class="px-5 py-3 border-b-2 border-gray-700 bg-gray-700 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                                    <?= e($column) ?>
+                                </th>
                             <?php endforeach; ?>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php else: ?>
-        <p>No data in this table.</p>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($tableData as $row): ?>
+                            <tr>
+                                <?php foreach ($row as $value): ?>
+                                    <td class="px-5 py-5 border-b border-gray-700 bg-gray-900 text-sm text-white" title="<?= e($value) ?>">
+                                        <?= e($value) ?>
+                                    </td>
+                                <?php endforeach; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <p class="text-gray-300">No data in this table.</p>
+        <?php endif; ?>
     <?php endif; ?>
-<?php endif; ?>
+</div>
 PHP
 
     # Settings page
     cat > app/admin/settings/page.php <<'PHP'
 <?php
-use App\Middleware\AdminOnly;
-
-// Require admin access
-AdminOnly::handle(new \App\Core\Request(), function($req) {});
 
 $title = 'Admin Settings';
 ?>
 
-<style>
-/* Reuse admin styles */
-.admin-nav {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-white mb-6">⚙️ Settings</h1>
 
-.admin-nav a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    margin-right: 0.5rem;
-    color: #4a5568;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.2s;
-}
-
-.admin-nav a:hover {
-    background: #edf2f7;
-    color: #2d3748;
-}
-
-.admin-nav a.active {
-    background: #667eea;
-    color: white;
-}
-
-.settings-grid {
-    display: grid;
-    gap: 1.5rem;
-}
-
-.setting-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.setting-card h3 {
-    margin-top: 0;
-    color: #2d3748;
-}
-
-.setting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.setting-item:last-child {
-    border-bottom: none;
-}
-
-.setting-label {
-    font-weight: 500;
-    color: #4a5568;
-}
-
-.setting-value {
-    color: #718096;
-}
-</style>
-
-<h1>⚙️ Settings</h1>
-
-<div class="admin-nav">
-    <a href="/admin">Dashboard</a>
-    <a href="/admin/users">Users</a>
-    <a href="/admin/database">Database</a>
-    <a href="/admin/settings" class="active">Settings</a>
-    <a href="/" style="float: right;">← Back to Site</a>
-</div>
-
-<div class="settings-grid">
-    <div class="setting-card">
-        <h3>Application Settings</h3>
-        <div class="setting-item">
-            <span class="setting-label">Environment</span>
-            <span class="setting-value"><?= e(env('APP_ENV', 'production')) ?></span>
-        </div>
-        <div class="setting-item">
-            <span class="setting-label">Debug Mode</span>
-            <span class="setting-value"><?= env('APP_DEBUG', false) ? 'Enabled' : 'Disabled' ?></span>
-        </div>
-        <div class="setting-item">
-            <span class="setting-label">App URL</span>
-            <span class="setting-value"><?= e(env('APP_URL', 'http://localhost')) ?></span>
-        </div>
+    <div class="bg-gray-800 rounded-lg shadow-lg p-4 mb-6 flex space-x-4">
+        <a href="/admin" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Dashboard</a>
+        <a href="/admin/users" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Users</a>
+        <a href="/admin/database" class="px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">Database</a>
+        <a href="/admin/settings" class="px-4 py-2 rounded-md bg-blue-600 text-white font-medium">Settings</a>
+        <a href="/" class="ml-auto px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">← Back to Site</a>
     </div>
 
-    <div class="setting-card">
-        <h3>Security Settings</h3>
-        <div class="setting-item">
-            <span class="setting-label">CSRF Protection</span>
-            <span class="setting-value"><?= env('CSRF_ENABLED', true) ? 'Enabled' : 'Disabled' ?></span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-gray-800 rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-white mb-4">Application Settings</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">Environment</span>
+                    <span class="text-white"><?= e(env('APP_ENV', 'production')) ?></span>
+                </div>
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">Debug Mode</span>
+                    <span class="text-white"><?= env('APP_DEBUG', false) ? 'Enabled' : 'Disabled' ?></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300 font-medium">App URL</span>
+                    <span class="text-white"><?= e(env('APP_URL', 'http://localhost')) ?></span>
+                </div>
+            </div>
         </div>
-        <div class="setting-item">
-            <span class="setting-label">Secure Cookies</span>
-            <span class="setting-value"><?= env('SECURE_COOKIES', false) ? 'Enabled' : 'Disabled' ?></span>
-        </div>
-        <div class="setting-item">
-            <span class="setting-label">JWT Access Token Expiry</span>
-            <span class="setting-value"><?= env('JWT_ACCESS_EXP', 900) ?> seconds</span>
-        </div>
-        <div class="setting-item">
-            <span class="setting-label">JWT Refresh Token Expiry</span>
-            <span class="setting-value"><?= env('JWT_REFRESH_EXP', 604800) ?> seconds</span>
-        </div>
-    </div>
 
-    <div class="setting-card">
-        <h3>Database Settings</h3>
-        <div class="setting-item">
-            <span class="setting-label">Connection</span>
-            <span class="setting-value"><?= e(env('DB_CONNECTION', 'sqlite')) ?></span>
+        <div class="bg-gray-800 rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-white mb-4">Security Settings</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">CSRF Protection</span>
+                    <span class="text-white"><?= env('CSRF_ENABLED', true) ? 'Enabled' : 'Disabled' ?></span>
+                </div>
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">Secure Cookies</span>
+                    <span class="text-white"><?= env('SECURE_COOKIES', false) ? 'Enabled' : 'Disabled' ?></span>
+                </div>
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">JWT Access Token Expiry</span>
+                    <span class="text-white"><?= env('JWT_ACCESS_EXP', 900) ?> seconds</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300 font-medium">JWT Refresh Token Expiry</span>
+                    <span class="text-white"><?= env('JWT_REFRESH_EXP', 604800) ?> seconds</span>
+                </div>
+            </div>
         </div>
-        <?php if (env('DB_CONNECTION') === 'sqlite'): ?>
-        <div class="setting-item">
-            <span class="setting-label">Database Path</span>
-            <span class="setting-value"><?= e(env('DB_PATH', 'storage/db/app.db')) ?></span>
-        </div>
-        <?php endif; ?>
-    </div>
 
-    <div class="setting-card">
-        <h3>Logging Settings</h3>
-        <div class="setting-item">
-            <span class="setting-label">Log Level</span>
-            <span class="setting-value"><?= e(env('LOG_LEVEL', 'debug')) ?></span>
+        <div class="bg-gray-800 rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-white mb-4">Database Settings</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">Connection</span>
+                    <span class="text-white"><?= e(env('DB_CONNECTION', 'sqlite')) ?></span>
+                </div>
+                <?php if (env('DB_CONNECTION') === 'sqlite'): ?>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300 font-medium">Database Path</span>
+                    <span class="text-white"><?= e(env('DB_PATH', 'storage/db/app.db')) ?></span>
+                </div>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="setting-item">
-            <span class="setting-label">Log File</span>
-            <span class="setting-value"><?= e(env('LOG_FILE', 'storage/logs/app.log')) ?></span>
-        </div>
-    </div>
 
-    <div class="setting-card">
-        <h3>System Information</h3>
-        <div class="setting-item">
-            <span class="setting-label">PHP Version</span>
-            <span class="setting-value"><?= PHP_VERSION ?></span>
+        <div class="bg-gray-800 rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-white mb-4">Logging Settings</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">Log Level</span>
+                    <span class="text-white"><?= e(env('LOG_LEVEL', 'debug')) ?></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300 font-medium">Log File</span>
+                    <span class="text-white"><?= e(env('LOG_FILE', 'storage/logs/app.log')) ?></span>
+                </div>
+            </div>
         </div>
-        <div class="setting-item">
-            <span class="setting-label">Framework Version</span>
-            <span class="setting-value">Bastion PHP 2.1.0</span>
+
+        <div class="bg-gray-800 rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-white mb-4">System Information</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                    <span class="text-gray-300 font-medium">PHP Version</span>
+                    <span class="text-white"><?= PHP_VERSION ?></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300 font-medium">Framework Version</span>
+                    <span class="text-white">Bastion PHP 2.1.0</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
