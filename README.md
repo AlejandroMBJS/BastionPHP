@@ -2,7 +2,7 @@
 
 **Enterprise-Grade PHP Framework for Multi-Plant Standardization**
 
-[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/yourusername/bastion-php)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/AlexMejiaImpro/bastionphp)
 [![Security](https://img.shields.io/badge/security-9%2F10-brightgreen.svg)](SECURITY_FIXES_SUMMARY.md)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4.svg)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -238,7 +238,7 @@ app/
 
 ```bash
 # On your development server at Plant A
-git clone https://github.com/yourusername/bastionphp.git plant-tools
+git clone https://github.com/AlexMejiaImpro/bastionphp.git plant-tools
 cd plant-tools
 
 # Install dependencies
@@ -490,7 +490,7 @@ Bastion PHP has undergone extensive security audits and hardening. **Security Sc
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/bastionphp.git my-app
+git clone https://github.com/AlexMejiaImpro/bastionphp.git my-app
 cd my-app
 
 # Install dependencies
@@ -542,7 +542,7 @@ bash create-php-app.sh my-app --no-composer
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/bastionphp.git
+git clone https://github.com/AlexMejiaImpro/bastionphp.git
 cd bastionphp
 
 # 2. Install dependencies
@@ -2084,7 +2084,7 @@ These benchmarks were run on a standard development machine (PHP 8.2, 4-core CPU
 # Install Bastion PHP on a dev server
 
 ssh plant-a-server
-git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
+git clone https://github.com/impromx/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure for Plant A
@@ -2146,7 +2146,7 @@ if [ -z "$PLANT_NAME" ] || [ -z "$PLANT_CODE" ]; then
 fi
 
 # Clone
-git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
+git clone https://github.com/impromx/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure
@@ -2199,7 +2199,7 @@ modules/
 ```bash
 # At Plant F: Install quality-control module
 cd /var/www/plant-tools
-git clone https://github.com/yourcompany/bastionphp-modules.git /tmp/modules
+git clone https://github.com/impromx/bastionphp-modules.git /tmp/modules
 
 # Copy module
 cp -r /tmp/modules/quality-control/app/quality app/
@@ -2219,7 +2219,7 @@ php artisan migrate
 
 ```apache
 <VirtualHost *:80>
-    ServerName plant-tools.yourcompany.com
+    ServerName plant-tools.impromx.com
     DocumentRoot /var/www/plant-tools/public
 
     <Directory /var/www/plant-tools/public>
@@ -2240,7 +2240,7 @@ php artisan migrate
 ```nginx
 server {
     listen 80;
-    server_name plant-tools.yourcompany.com;
+    server_name plant-tools.impromx.com;
     root /var/www/plant-tools/public;
     index index.php;
 
@@ -2515,8 +2515,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - 📧 Email: support@bastionphp.dev
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/bastionphp/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/bastionphp/discussions)
+- 🐛 Issues: [GitHub Issues](https://github.com/AlexMejiaImpro/bastionphp/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/AlexMejiaImpro/bastionphp/discussions)
 - 📖 Docs: Open `index.html` in your browser
 
 ---

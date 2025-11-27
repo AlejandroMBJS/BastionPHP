@@ -2661,8 +2661,8 @@ chmod 644 .env
           <h3>Deployment Steps</h3>
 
           <pre><code># 1. Clone repository
-git clone https://github.com/yourusername/my-app.git
-cd my-app
+git clone https://github.com/AlexMejiaImpro/bastionphp.git
+cd bastionphp
 
 # 2. Install dependencies
 composer install --no-dev --optimize-autoloader
@@ -2727,7 +2727,7 @@ sudo certbot --apache -d example.com -d www.example.com
 # Install Bastion PHP on a dev server
 
 ssh plant-a-server
-git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
+git clone https://github.com/impromx/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure for Plant A
@@ -2784,7 +2784,7 @@ if [ -z "$PLANT_NAME" ] || [ -z "$PLANT_CODE" ]; then
 fi
 
 # Clone
-git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
+git clone https://github.com/impromx/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure
@@ -2826,7 +2826,7 @@ modules/
           <p><strong>Any plant can install a module:</strong></p>
           <pre><code># At Plant F: Install quality-control module
 cd /var/www/plant-tools
-git clone https://github.com/yourcompany/bastionphp-modules.git /tmp/modules
+git clone https://github.com/impromx/bastionphp-modules.git /tmp/modules
 
 # Copy module
 cp -r /tmp/modules/quality-control/app/quality app/
