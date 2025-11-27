@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -34,7 +35,8 @@
       scroll-behavior: smooth;
     }
 
-    html, body {
+    html,
+    body {
       height: 100%;
       font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(180deg, #0a0e1a 0%, #0f1724 50%, #071428 100%);
@@ -61,9 +63,19 @@
     }
 
     @keyframes drift {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      33% { transform: translate(30px, -30px) rotate(5deg); }
-      66% { transform: translate(-20px, 20px) rotate(-5deg); }
+
+      0%,
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      33% {
+        transform: translate(30px, -30px) rotate(5deg);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) rotate(-5deg);
+      }
     }
 
     .container {
@@ -101,8 +113,17 @@
     }
 
     @keyframes shimmer {
-      0%, 100% { opacity: 0.5; transform: translateX(0); }
-      50% { opacity: 1; transform: translateX(100px); }
+
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: translateX(0);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translateX(100px);
+      }
     }
 
     .logo {
@@ -149,8 +170,15 @@
     }
 
     @keyframes gradient-flow {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
     }
 
     .logo h1::after {
@@ -393,7 +421,8 @@
       color: #cbd5e1;
     }
 
-    ul, ol {
+    ul,
+    ol {
       margin: 16px 0;
       padding-left: 24px;
       color: #cbd5e1;
@@ -425,11 +454,10 @@
       right: 0;
       height: 1px;
       background: linear-gradient(90deg,
-        transparent,
-        rgba(100, 213, 255, 0.5),
-        rgba(167, 139, 250, 0.5),
-        transparent
-      );
+          transparent,
+          rgba(100, 213, 255, 0.5),
+          rgba(167, 139, 250, 0.5),
+          transparent);
     }
 
     pre:hover {
@@ -449,7 +477,7 @@
       font-variant-ligatures: common-ligatures;
     }
 
-    :not(pre) > code {
+    :not(pre)>code {
       background: linear-gradient(135deg, rgba(100, 213, 255, 0.15), rgba(167, 139, 250, 0.1));
       padding: 3px 10px;
       border-radius: 6px;
@@ -461,7 +489,7 @@
       transition: all 0.2s ease;
     }
 
-    :not(pre) > code:hover {
+    :not(pre)>code:hover {
       background: linear-gradient(135deg, rgba(100, 213, 255, 0.2), rgba(167, 139, 250, 0.15));
       border-color: rgba(100, 213, 255, 0.3);
       box-shadow: 0 4px 12px rgba(100, 213, 255, 0.2);
@@ -546,9 +574,8 @@
 
     .highlight {
       background: linear-gradient(135deg,
-        rgba(100, 213, 255, 0.08),
-        rgba(167, 139, 250, 0.05)
-      );
+          rgba(100, 213, 255, 0.08),
+          rgba(167, 139, 250, 0.05));
       border-left: 4px solid var(--accent);
       padding: 20px 24px;
       border-radius: 0 12px 12px 0;
@@ -622,7 +649,8 @@
       box-shadow: 0 4px 16px rgba(2, 6, 23, 0.4);
     }
 
-    th, td {
+    th,
+    td {
       padding: 16px;
       text-align: left;
       border-bottom: 1px solid rgba(100, 213, 255, 0.08);
@@ -731,13 +759,14 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
       <div class="logo">
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="40" height="40" rx="8" fill="#072338"/>
-          <path d="M10 20h20M10 12h20M10 28h20" stroke="#64d5ff" stroke-width="2" stroke-linecap="round"/>
+          <rect width="40" height="40" rx="8" fill="#072338" />
+          <path d="M10 20h20M10 12h20M10 28h20" stroke="#64d5ff" stroke-width="2" stroke-linecap="round" />
         </svg>
         <h1>Bastion PHP</h1>
       </div>
@@ -783,11 +812,17 @@
         <section id="introduction" class="section">
           <h2>Introduction</h2>
 
-          <p><strong>Bastion PHP</strong> is an enterprise-grade PHP framework designed to standardize development across organizations while providing the modern developer experience of Next.js App Router.</p>
+          <p><strong>Bastion PHP</strong> is an enterprise-grade PHP framework designed to standardize development
+            across organizations while providing the modern developer experience of Next.js App Router.</p>
 
-          <p>Built to solve real business challenges, Bastion PHP combines battle-tested PHP technologies with contemporary development patterns. It's the framework for companies that want to maintain a consistent codebase, reduce developer onboarding time, and ensure production-ready security without sacrificing productivity.</p>
+          <p>Built to solve real business challenges, Bastion PHP combines battle-tested PHP technologies with
+            contemporary development patterns. It's the framework for companies that want to maintain a consistent
+            codebase, reduce developer onboarding time, and ensure production-ready security without sacrificing
+            productivity.</p>
 
-          <p>Whether you're building internal tools, customer-facing applications, or APIs, Bastion PHP provides a secure, performant foundation that both experienced developers and new hires can understand and work with from day one.</p>
+          <p>Whether you're building internal tools, customer-facing applications, or APIs, Bastion PHP provides a
+            secure, performant foundation that both experienced developers and new hires can understand and work with
+            from day one.</p>
 
           <div class="feature-grid">
             <div class="feature-card">
@@ -823,11 +858,14 @@
 
           <h3>Why Bastion PHP?</h3>
 
-          <p><strong>Bastion PHP was created to establish a company-wide development standard</strong> that combines battle-tested PHP technologies with modern development practices inspired by Next.js.</p>
+          <p><strong>Bastion PHP was created to establish a company-wide development standard</strong> that combines
+            battle-tested PHP technologies with modern development practices inspired by Next.js.</p>
 
           <h4>The Business Challenge</h4>
 
-          <p>Our company needed a framework that would standardize development, reduce onboarding time for new developers, ensure enterprise-grade security, and maintain production-level performance across all PHP projects.</p>
+          <p>Our company needed a framework that would standardize development, reduce onboarding time for new
+            developers, ensure enterprise-grade security, and maintain production-level performance across all PHP
+            projects.</p>
 
           <h4>The Solution</h4>
 
@@ -861,54 +899,18 @@
             <li><strong>Growth Opportunity:</strong> Learn enterprise PHP development the right way</li>
           </ul>
 
-          <h3>Who Should Use Bastion PHP?</h3>
-
-          <div class="feature-grid">
-            <div class="feature-card">
-              <h4>🏢 Companies & Teams</h4>
-              <ul>
-                <li>Organizations standardizing PHP development</li>
-                <li>Companies onboarding Next.js developers</li>
-                <li>Teams building multiple applications</li>
-                <li>Businesses requiring enterprise security</li>
-              </ul>
-            </div>
-
-            <div class="feature-card">
-              <h4>👥 Development Teams</h4>
-              <ul>
-                <li>Teams of 2-20 developers</li>
-                <li>Agencies with multiple clients</li>
-                <li>Startups scaling their team</li>
-                <li>Companies migrating from legacy PHP</li>
-              </ul>
-            </div>
-
-            <div class="feature-card">
-              <h4>💼 Perfect Use Cases</h4>
-              <ul>
-                <li>Internal business applications</li>
-                <li>Customer-facing web apps</li>
-                <li>RESTful APIs and microservices</li>
-                <li>MVPs and SaaS platforms</li>
-              </ul>
-            </div>
-          </div>
-
           <div class="card">
             <h4>🔌 Extensible for Real-Time Features</h4>
-            <p>While Bastion PHP doesn't include WebSocket infrastructure by default, it's designed to easily integrate real-time capabilities when needed:</p>
+            <p>While Bastion PHP doesn't include WebSocket infrastructure by default, it's designed to easily integrate
+              real-time capabilities when needed:</p>
             <ul>
               <li><strong>Real-time Notifications:</strong> Integrate with Ratchet or ReactPHP</li>
               <li><strong>Team Chat:</strong> Add WebSocket server for internal communication</li>
               <li><strong>Video Conferencing:</strong> Integrate WebRTC or services like Jitsi, Daily.co</li>
               <li><strong>Live Collaboration:</strong> Build real-time features without framework limitations</li>
             </ul>
-            <p><strong>Philosophy:</strong> Bastion PHP provides the secure foundation. You add specialized features as your needs grow.</p>
-          </div>
-
-          <div class="alert warning">
-            <strong>Not Recommended For:</strong> High-traffic apps (>100k users/day) without optimization, or projects requiring deep Laravel/Symfony ecosystem integration.
+            <p><strong>Philosophy:</strong> Bastion PHP provides the secure foundation. You add specialized features as
+              your needs grow.</p>
           </div>
         </section>
 
@@ -929,7 +931,7 @@
 
           <h4>Generator Options</h4>
 
-          <pre><code># Minimal structure (no auth examples)
+          <pre><code># Minimal structure (no auth premounted)
 bash create-php-app.sh my-app --minimal
 
 # Full authentication system (default)
@@ -961,7 +963,8 @@ php artisan db:seed
 php artisan serve</code></pre>
 
           <div class="alert info">
-            <strong>🔑 Security Keys:</strong> The generator automatically creates secure random keys for APP_KEY and JWT_SECRET. Always regenerate these before deploying to production.
+            <strong>🔑 Security Keys:</strong> The generator automatically creates secure random keys for APP_KEY and
+            JWT_SECRET. Always regenerate these before deploying to production.
           </div>
         </section>
 
@@ -977,10 +980,7 @@ cd my-app
 php artisan serve
 
 # Visit http://127.0.0.1:9876</code></pre>
-          
-          <div class="alert info">
-            <strong>Note:</strong> Bastion PHP uses port 9876 as the default local development port.
-          </div>
+
 
           <div class="alert info">
             <strong>Note:</strong> Bastion PHP uses port 9876 as the default local development port.
@@ -1002,47 +1002,119 @@ php artisan serve
           <h2>Project Structure</h2>
 
           <pre><code>my-app/
-├── app/
-│   ├── core/              # Framework classes (App, Router, Auth, etc.)
-│   ├── middleware/        # Custom middleware
-│   ├── models/            # Database models
-│   ├── views/
-│   │   ├── layouts/       # Shared layouts
-│   │   └── errors/        # Error pages (404, 500)
-│   ├── page.php           # Homepage (/)
-│   ├── login/
-│   │   ├── page.php       # Login page (GET /login)
-│   │   └── +server.php    # Login API (POST /login)
-│   └── bootstrap.php      # App initialization
-├── config/                # Configuration files
-├── database/
-│   ├── migrations/        # Database migrations
-│   └── seeds/             # Database seeders
-├── public/
-│   ├── index.php          # Front controller
-│   └── .htaccess          # Apache rewrite rules
-├── storage/
-│   ├── db/                # SQLite database
-│   ├── logs/              # Application logs
-│   └── cache/             # Cache files
-├── vendor/                # Composer dependencies
-├── .env                   # Environment configuration
-├── .env.example           # Example env file
+├── app
+│   ├── admin
+│   │   ├── database
+│   │   │   └── page.php
+│   │   ├── page.php
+│   │   ├── settings
+│   │   │   └── page.php
+│   │   └── users
+│   │       └── page.php
+│   ├── api
+│   │   ├── auth
+│   │   │   └── refresh
+│   │   └── users
+│   │       └── +server.php
+│   ├── bootstrap.php
+│   ├── core
+│   │   ├── App.php
+│   │   ├── Auth.php
+│   │   ├── CSRF.php
+│   │   ├── DB.php
+│   │   ├── helpers.php
+│   │   ├── Logger.php
+│   │   ├── Request.php
+│   │   ├── Response.php
+│   │   └── Router.php
+│   ├── layout.php
+│   ├── login
+│   │   ├── page.php
+│   │   └── +server.php
+│   ├── logout
+│   │   └── page.php
+│   ├── middleware
+│   │   ├── AdminOnly.php
+│   │   ├── RateLimit.php
+│   │   └── SecurityHeaders.php
+│   ├── models
+│   │   └── User.php
+│   ├── page.php
+│   ├── profile
+│   │   └── page.php
+│   ├── register
+│   │   ├── page.php
+│   │   └── +server.php
+│   └── views
+│       └── errors
+│           ├── 404.php
+│           └── 500.php
+│
+├── artisan
+├── composer.json
+├── composer.lock
+├── config
+│   ├── app.php
+│   └── style.php
+│
+├── database
+│   ├── migrations
+│   │   ├── 001_create_users_table.php
+│   │   ├── 002_create_migrations_table.php
+│   │   └── 003_create_refresh_tokens_table.php
+│   └── seeds
+│       └── UserSeeder.php
+│
+├── package.json
+├── package-lock.json
+│
+├── public
+│   ├── css
+│   │   ├── app.css
+│   │   └── fallback.css
+│   └── index.php
+│
+├── README.md
+│
+├── resources
+│   └── css
+│       └── app.css
+│
+├── storage
+│   ├── cache
+│   ├── db
+│   │   └── app.db
+│   └── logs
+│       └── app.log
+│
+├── tailwind.config.js
+├── test_all_features.php
+├── tests
+│   └── bootstrap.php        # Cache files
+│
+├── vendor/                  # Composer dependencies
+│
+├── .env
+├── .env.example
 ├── .gitignore
-├── artisan                # CLI tool
-└── composer.json</code></pre>
+└── artisan                  # CLI tool
+/code></pre>
         </section>
 
         <section id="global-styling" class="section">
           <h2>🎨 Global Styling System</h2>
 
           <div class="highlight">
-            <strong>One of Bastion PHP's most powerful features</strong> is the Global Styling System - a centralized way to manage styling across your entire application <strong>without manually importing CSS in every view</strong>.
+            <strong>One of Bastion PHP's most powerful features</strong> is the Global Styling System - a centralized
+            way to manage styling across your entire application <strong>without manually importing CSS in every
+              view</strong>.
           </div>
 
           <h3>How It Works</h3>
           <p>
-            The Global Styling System automatically injects the correct CSS/JavaScript into your pages based on a single configuration file: <code>config/style.php</code>. You <strong>never need to manually add <code>&lt;link&gt;</code> or <code>&lt;script&gt;</code> tags</strong> in your page templates.
+            The Global Styling System automatically injects the correct CSS/JavaScript into your pages based on a single
+            configuration file: <code>config/style.php</code>. You <strong>never need to manually add
+              <code>&lt;link&gt;</code> or <code>&lt;script&gt;</code> tags</strong> in your page templates.
           </p>
 
           <h4>Key Benefits</h4>
@@ -1050,7 +1122,8 @@ php artisan serve
             <li>✅ <strong>Zero Manual Imports</strong> - Configure once, use everywhere</li>
             <li>✅ <strong>Consistent Styling</strong> - All pages use the same styling system automatically</li>
             <li>✅ <strong>Easy Theme Switching</strong> - Change from Tailwind to custom CSS in one place</li>
-            <li>✅ <strong>Development/Production Modes</strong> - Switch between CDN (dev) and build (production) instantly</li>
+            <li>✅ <strong>Development/Production Modes</strong> - Switch between CDN (dev) and build (production)
+              instantly</li>
             <li>✅ <strong>Layout Inheritance</strong> - Styles automatically injected in all nested layouts</li>
           </ul>
 
@@ -1078,7 +1151,8 @@ return [
           <p><strong>That's it!</strong> Change these settings and ALL pages update automatically.</p>
 
           <h3>Auto-Injection in Layouts</h3>
-          <p>Bastion PHP automatically injects styles in your <code>app/layout.php</code> file using helper functions:</p>
+          <p>Bastion PHP automatically injects styles in your <code>app/layout.php</code> file using helper functions:
+          </p>
 
           <pre><code>&lt;?php
 // app/layout.php
@@ -1116,7 +1190,8 @@ $tailwindMode = tailwind_mode(); // Returns 'cdn' or 'build'
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-          <p><strong>Result:</strong> Every page that uses this layout automatically gets the correct styling - NO manual imports needed!</p>
+          <p><strong>Result:</strong> Every page that uses this layout automatically gets the correct styling - NO
+            manual imports needed!</p>
 
           <h3>Helper Functions for Styling</h3>
           <p>Bastion PHP provides dedicated helper functions to access style configuration:</p>
@@ -1251,7 +1326,8 @@ $title = 'Products';
     &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
-          <p><strong>That's it!</strong> Tailwind classes work immediately because the layout auto-injected Tailwind.</p>
+          <p><strong>That's it!</strong> Tailwind classes work immediately because the layout auto-injected Tailwind.
+          </p>
 
           <h4>Example 2: Conditional Styling Based on Config</h4>
           <pre><code>&lt;?php
@@ -1290,7 +1366,8 @@ $useTailwind = use_tailwind();
 # At Plant C - Use custom CSS
 # config/style.php → 'useTailwind' => false</code></pre>
 
-          <p><strong>Result:</strong> Same page files, different styling - ALL managed from one config file per plant!</p>
+          <p><strong>Result:</strong> Same page files, different styling - ALL managed from one config file per plant!
+          </p>
 
           <h3>Troubleshooting</h3>
 
@@ -1333,14 +1410,18 @@ npm run build</code></pre>
               <li>✅ <strong>Easy theme switching</strong> (change one line)</li>
               <li>✅ <strong>Multi-plant flexibility</strong> (each plant can use different modes)</li>
             </ul>
-            <p><strong>Remember:</strong> You NEVER manually add <code>&lt;link&gt;</code> or <code>&lt;script&gt;</code> tags for Tailwind in your page files. The layout handles it automatically based on <code>config/style.php</code>.</p>
+            <p><strong>Remember:</strong> You NEVER manually add <code>&lt;link&gt;</code> or
+              <code>&lt;script&gt;</code> tags for Tailwind in your page files. The layout handles it automatically
+              based on <code>config/style.php</code>.</p>
           </div>
         </section>
 
         <section id="routing" class="section">
           <h2>File-Based Routing</h2>
 
-          <p>This is where Bastion PHP shines. Remember how Next.js lets you organize routes by just creating folders? Same idea here, but with PHP. Drop a <code>page.php</code> file anywhere in your <code>app/</code> directory and boom – that's a route.</p>
+          <p>This is where Bastion PHP shines. Remember how Next.js lets you organize routes by just creating folders?
+            Same idea here, but with PHP. Drop a <code>page.php</code> file anywhere in your <code>app/</code> directory
+            and boom – that's a route.</p>
 
           <h3>Basic Routes</h3>
 
@@ -1444,7 +1525,8 @@ $title = e($user['name']);
         <section id="api-routes" class="section">
           <h2>API Routes (+server.php)</h2>
 
-          <p>API endpoints are defined using <code>+server.php</code> files alongside your pages. These handle HTTP methods (GET, POST, PUT, DELETE) and return JSON responses.</p>
+          <p>API endpoints are defined using <code>+server.php</code> files alongside your pages. These handle HTTP
+            methods (GET, POST, PUT, DELETE) and return JSON responses.</p>
 
           <h3>Creating an API Endpoint</h3>
 
@@ -1514,7 +1596,8 @@ return [
         <section id="layouts" class="section">
           <h2>Layouts & Nesting</h2>
 
-          <p>Layouts wrap your pages with common HTML structure. Bastion PHP supports nested layouts for maximum flexibility.</p>
+          <p>Layouts wrap your pages with common HTML structure. Bastion PHP supports nested layouts for maximum
+            flexibility.</p>
 
           <h3>Creating a Layout</h3>
 
@@ -1596,12 +1679,14 @@ return [
         <section id="middleware" class="section">
           <h2>Middleware</h2>
 
-          <p>Middleware functions intercept requests and can modify them or terminate early (e.g., for authentication, logging, rate limiting).</p>
+          <p>Middleware functions intercept requests and can modify them or terminate early (e.g., for authentication,
+            logging, rate limiting).</p>
 
           <h3>Built-in Middleware</h3>
 
           <ul>
-            <li><strong>SecurityHeaders:</strong> Sets security headers with CSP nonces (CSP, X-Frame-Options, etc.)</li>
+            <li><strong>SecurityHeaders:</strong> Sets security headers with CSP nonces (CSP, X-Frame-Options, etc.)
+            </li>
             <li><strong>CSRF:</strong> Validates CSRF tokens on POST/PUT/DELETE/PATCH</li>
             <li><strong>Auth::loadUser:</strong> Loads authenticated user from JWT token</li>
             <li><strong>RateLimit:</strong> Limits request rate by IP</li>
@@ -1609,7 +1694,8 @@ return [
 
           <h4>Using CSP Nonces in Templates</h4>
 
-          <p>The SecurityHeaders middleware automatically generates a unique nonce for each request. Use it in your inline scripts and styles:</p>
+          <p>The SecurityHeaders middleware automatically generates a unique nonce for each request. Use it in your
+            inline scripts and styles:</p>
 
           <pre><code>&lt;!-- Access the nonce from $req-&gt;meta['csp_nonce'] --&gt;
 &lt;script nonce="&lt;?= $req-&gt;meta['csp_nonce'] ?? '' ?&gt;"&gt;
@@ -1623,7 +1709,8 @@ return [
 &lt;/style&gt;</code></pre>
 
           <div class="alert warning">
-            <strong>Note:</strong> External scripts from approved domains (like unpkg.com for HTMX) work without nonces. Only inline scripts and styles require the nonce attribute.
+            <strong>Note:</strong> External scripts from approved domains (like unpkg.com for HTMX) work without nonces.
+            Only inline scripts and styles require the nonce attribute.
           </div>
 
           <h3>Registering Middleware</h3>
@@ -1809,14 +1896,16 @@ Response:
 </code></pre>
 
           <div class="alert warning">
-            <strong>Security Note:</strong> Always use HTTPS in production and set <code>SECURE_COOKIES=true</code> in <code>.env</code>.
+            <strong>Security Note:</strong> Always use HTTPS in production and set <code>SECURE_COOKIES=true</code> in
+            <code>.env</code>.
           </div>
         </section>
 
         <section id="csrf" class="section">
           <h2>CSRF Protection</h2>
 
-          <p>Cross-Site Request Forgery (CSRF) protection is enabled by default for all state-changing requests (POST, PUT, DELETE, PATCH).</p>
+          <p>Cross-Site Request Forgery (CSRF) protection is enabled by default for all state-changing requests (POST,
+            PUT, DELETE, PATCH).</p>
 
           <h3>How It Works</h3>
 
@@ -1853,7 +1942,8 @@ document.body.addEventListener('htmx:configRequest', (event) => {
 
           <h3>Disabling CSRF for Specific Routes</h3>
 
-          <p>JSON API requests automatically skip CSRF validation (they should use CORS and SameSite cookies instead).</p>
+          <p>JSON API requests automatically skip CSRF validation (they should use CORS and SameSite cookies instead).
+          </p>
 
           <p>To disable CSRF globally, set in <code>.env</code>:</p>
 
@@ -1863,7 +1953,8 @@ document.body.addEventListener('htmx:configRequest', (event) => {
         <section id="database" class="section">
           <h2>Database & Migrations</h2>
 
-          <p>Bastion PHP uses SQLite by default but supports MySQL and PostgreSQL. Database schema is managed through migrations.</p>
+          <p>Bastion PHP uses SQLite by default but supports MySQL and PostgreSQL. Database schema is managed through
+            migrations.</p>
 
           <h3>Database Configuration</h3>
 
@@ -2196,7 +2287,7 @@ php artisan serve
 
 # Custom host and port
 php artisan serve 0.0.0.0 9876</code></pre>
-          
+
           <div class="alert info">
             <strong>Note:</strong> Bastion PHP uses port 9876 as the default local development port.
           </div>
@@ -2369,7 +2460,8 @@ php test_all_features.php</code></pre>
 
           <h3>Detailed Performance Analysis</h3>
 
-          <p>These benchmarks were run on a standard development machine (PHP 8.2, 4-core CPU, 8GB RAM) to provide a realistic baseline for performance expectations.</p>
+          <p>These benchmarks were run on a standard development machine (PHP 8.2, 4-core CPU, 8GB RAM) to provide a
+            realistic baseline for performance expectations.</p>
 
           <table>
             <thead>
@@ -2472,9 +2564,12 @@ php test_all_features.php</code></pre>
           <h3>Recommendations</h3>
           <ul>
             <li><strong>For most internal tools:</strong> The default configuration is more than sufficient.</li>
-            <li><strong>For high-traffic APIs:</strong> Implement route caching and use a dedicated database server (MySQL/PostgreSQL).</li>
-            <li><strong>For public-facing sites:</strong> Use a build step for Tailwind CSS to eliminate runtime JIT overhead.</li>
-            <li><strong>For maximum performance:</strong> Enable Opcache preloading in your `php.ini` configuration.</li>
+            <li><strong>For high-traffic APIs:</strong> Implement route caching and use a dedicated database server
+              (MySQL/PostgreSQL).</li>
+            <li><strong>For public-facing sites:</strong> Use a build step for Tailwind CSS to eliminate runtime JIT
+              overhead.</li>
+            <li><strong>For maximum performance:</strong> Enable Opcache preloading in your `php.ini` configuration.
+            </li>
           </ul>
         </section>
 
@@ -2482,7 +2577,8 @@ php test_all_features.php</code></pre>
           <h2>Security Best Practices</h2>
 
           <div class="alert info">
-            <strong>✅ Security Score: 9/10</strong> — All critical vulnerabilities have been patched. Bastion PHP now includes enterprise-grade security features out of the box.
+            <strong>✅ Security Score: 9/10</strong> — All critical vulnerabilities have been patched. Bastion PHP now
+            includes enterprise-grade security features out of the box.
           </div>
 
           <h3>Built-In Security Features (v2.0+)</h3>
@@ -2490,7 +2586,8 @@ php test_all_features.php</code></pre>
           <div class="feature-grid">
             <div class="feature-card">
               <h4>🛡️ Path Traversal Protection</h4>
-              <p>Automatically filters dangerous path segments (<code>..</code>, <code>.</code>) to prevent directory traversal attacks.</p>
+              <p>Automatically filters dangerous path segments (<code>..</code>, <code>.</code>) to prevent directory
+                traversal attacks.</p>
             </div>
 
             <div class="feature-card">
@@ -2505,7 +2602,8 @@ php test_all_features.php</code></pre>
 
             <div class="feature-card">
               <h4>🔒 CSP Nonces</h4>
-              <p>Content Security Policy uses cryptographic nonces instead of <code>unsafe-inline</code> for better XSS protection.</p>
+              <p>Content Security Policy uses cryptographic nonces instead of <code>unsafe-inline</code> for better XSS
+                protection.</p>
             </div>
 
             <div class="feature-card">
@@ -2577,7 +2675,8 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]</code></pre>
 
           <h3>Security Headers</h3>
 
-          <p>The <code>SecurityHeaders</code> middleware sets important headers. Customize in <code>app/middleware/SecurityHeaders.php</code>:</p>
+          <p>The <code>SecurityHeaders</code> middleware sets important headers. Customize in
+            <code>app/middleware/SecurityHeaders.php</code>:</p>
 
           <pre><code>X-Frame-Options: SAMEORIGIN
 X-Content-Type-Options: nosniff
@@ -2838,7 +2937,7 @@ php artisan migrate
 # Quality control module now available at Plant F</code></pre>
         </section>
 
-        
+
         <section id="examples" class="section">
           <h2>Examples & Recipes</h2>
 
@@ -2994,4 +3093,5 @@ $totalPages = ceil($total / $perPage);
     </div>
   </div>
 </body>
+
 </html>
