@@ -2727,7 +2727,7 @@ sudo certbot --apache -d example.com -d www.example.com
 # Install Bastion PHP on a dev server
 
 ssh plant-a-server
-git clone https://github.com/yourcompany/routpher.git /var/www/plant-tools
+git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure for Plant A
@@ -2773,18 +2773,18 @@ php artisan migrate</code></pre>
           <h3>Phase 3: Company-Wide Rollout (Week 5-8)</h3>
           <p><strong>Standardized deployment script for all remaining plants:</strong></p>
           <pre><code>#!/bin/bash
-# deploy-routpher.sh
+# deploy-bastionphp.sh
 
 PLANT_NAME=$1
 PLANT_CODE=$2
 
 if [ -z "$PLANT_NAME" ] || [ -z "$PLANT_CODE" ]; then
-    echo "Usage: ./deploy-routpher.sh 'Plant Name' 'CODE'"
+    echo "Usage: ./deploy-bastionphp.sh 'Plant Name' 'CODE'"
     exit 1
 fi
 
 # Clone
-git clone https://github.com/yourcompany/routpher.git /var/www/plant-tools
+git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure
@@ -2800,14 +2800,14 @@ php artisan migrate
 
 echo "✓ Bastion PHP deployed for ${PLANT_NAME}"</code></pre>
           <p><strong>Usage at each plant:</strong></p>
-          <pre><code>./deploy-routpher.sh "Plant D - Ohio" "OH01"
-./deploy-routpher.sh "Plant E - Texas" "TX01"</code></pre>
+          <pre><code>./deploy-bastionphp.sh "Plant D - Ohio" "OH01"
+./deploy-bastionphp.sh "Plant E - Texas" "TX01"</code></pre>
 
           <h3>Phase 4: Module Sharing (Ongoing)</h3>
           <p><strong>Create a shared module repository:</strong></p>
           <pre><code># Central Git repo for shared modules
-mkdir routpher-modules
-cd routpher-modules
+mkdir bastionphp-modules
+cd bastionphp-modules
 
 # Create modules
 modules/
@@ -2826,7 +2826,7 @@ modules/
           <p><strong>Any plant can install a module:</strong></p>
           <pre><code># At Plant F: Install quality-control module
 cd /var/www/plant-tools
-git clone https://github.com/yourcompany/routpher-modules.git /tmp/modules
+git clone https://github.com/yourcompany/bastionphp-modules.git /tmp/modules
 
 # Copy module
 cp -r /tmp/modules/quality-control/app/quality app/

@@ -238,7 +238,7 @@ app/
 
 ```bash
 # On your development server at Plant A
-git clone https://github.com/yourusername/routpher.git plant-tools
+git clone https://github.com/yourusername/bastionphp.git plant-tools
 cd plant-tools
 
 # Install dependencies
@@ -490,7 +490,7 @@ Bastion PHP has undergone extensive security audits and hardening. **Security Sc
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/routpher.git my-app
+git clone https://github.com/yourusername/bastionphp.git my-app
 cd my-app
 
 # Install dependencies
@@ -542,8 +542,8 @@ bash create-php-app.sh my-app --no-composer
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/routpher.git
-cd routpher
+git clone https://github.com/yourusername/bastionphp.git
+cd bastionphp
 
 # 2. Install dependencies
 composer install
@@ -2084,7 +2084,7 @@ These benchmarks were run on a standard development machine (PHP 8.2, 4-core CPU
 # Install Bastion PHP on a dev server
 
 ssh plant-a-server
-git clone https://github.com/yourcompany/routpher.git /var/www/plant-tools
+git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure for Plant A
@@ -2135,18 +2135,18 @@ php artisan migrate
 
 ```bash
 #!/bin/bash
-# deploy-routpher.sh
+# deploy-bastionphp.sh
 
 PLANT_NAME=$1
 PLANT_CODE=$2
 
 if [ -z "$PLANT_NAME" ] || [ -z "$PLANT_CODE" ]; then
-    echo "Usage: ./deploy-routpher.sh 'Plant Name' 'CODE'"
+    echo "Usage: ./deploy-bastionphp.sh 'Plant Name' 'CODE'"
     exit 1
 fi
 
 # Clone
-git clone https://github.com/yourcompany/routpher.git /var/www/plant-tools
+git clone https://github.com/yourcompany/bastionphp.git /var/www/plant-tools
 cd /var/www/plant-tools
 
 # Configure
@@ -2165,8 +2165,8 @@ echo "✓ Bastion PHP deployed for ${PLANT_NAME}"
 
 **Usage at each plant:**
 ```bash
-./deploy-routpher.sh "Plant D - Ohio" "OH01"
-./deploy-routpher.sh "Plant E - Texas" "TX01"
+./deploy-bastionphp.sh "Plant D - Ohio" "OH01"
+./deploy-bastionphp.sh "Plant E - Texas" "TX01"
 ```
 
 ### Phase 4: Module Sharing (Ongoing)
@@ -2175,8 +2175,8 @@ echo "✓ Bastion PHP deployed for ${PLANT_NAME}"
 
 ```bash
 # Central Git repo for shared modules
-mkdir routpher-modules
-cd routpher-modules
+mkdir bastionphp-modules
+cd bastionphp-modules
 
 # Create modules
 modules/
@@ -2199,7 +2199,7 @@ modules/
 ```bash
 # At Plant F: Install quality-control module
 cd /var/www/plant-tools
-git clone https://github.com/yourcompany/routpher-modules.git /tmp/modules
+git clone https://github.com/yourcompany/bastionphp-modules.git /tmp/modules
 
 # Copy module
 cp -r /tmp/modules/quality-control/app/quality app/
@@ -2514,9 +2514,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- 📧 Email: support@routpher.dev
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/routpher/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/routpher/discussions)
+- 📧 Email: support@bastionphp.dev
+- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/bastionphp/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/bastionphp/discussions)
 - 📖 Docs: Open `index.html` in your browser
 
 ---

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #==============================================================================
-# ROUTPHER Framework Generator
+# Bastion PHP Framework Generator
 # A lightweight file-based PHP framework with JWT auth, CSRF, and more
-# Version: 2.0.0
+# Version: 2.1.0
 #==============================================================================
 
 set -euo pipefail
@@ -285,8 +285,8 @@ info "Creating composer.json..."
 
 cat > composer.json <<'JSON'
 {
-  "name": "routpher/app",
-  "description": "ROUTPHER - Lightweight PHP framework",
+  "name": "bastionphp/app",
+  "description": "Bastion PHP - Lightweight PHP framework",
   "type": "project",
   "require": {
     "php": "^8.0",
@@ -326,7 +326,7 @@ if [ "$WITH_TAILWIND" = true ]; then
 
     cat > package.json <<'JSON'
 {
-  "name": "routpher-app",
+  "name": "bastionphp-app",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -731,7 +731,7 @@ HTA
 cat > public/index.php <<'PHP'
 <?php
 /**
- * ROUTPHER Framework - Front Controller
+ * Bastion PHP Framework - Front Controller
  * All requests are routed through this file
  */
 
@@ -4072,7 +4072,7 @@ $title = 'Admin Settings';
         </div>
         <div class="setting-item">
             <span class="setting-label">Framework Version</span>
-            <span class="setting-value">ROUTPHER 2.1.0</span>
+            <span class="setting-value">Bastion PHP 2.1.0</span>
         </div>
     </div>
 </div>
@@ -4157,7 +4157,7 @@ switch ($command) {
         $host = $argv[2] ?? '127.0.0.1';
         $port = $argv[3] ?? '9876';
 
-        echo "ROUTPHER development server starting on http://$host:$port\n";
+        echo "Bastion PHP development server starting on http://$host:$port\n";
         echo "Press Ctrl+C to stop.\n\n";
 
         passthru(PHP_BINARY . " -S $host:$port -t public");
@@ -4181,7 +4181,7 @@ switch ($command) {
     case 'help':
     default:
         echo <<<HELP
-ROUTPHER Framework CLI
+Bastion PHP Framework CLI
 
 Usage:
   php artisan <command>
@@ -4682,7 +4682,7 @@ function test(string $name, callable $callback) {
     }
 }
 
-echo "Running ROUTPHER Feature Tests...\n\n";
+echo "Running Bastion PHP Feature Tests...\n\n";
 
 //--- Helper Functions ---
 test('env() - Default value when not found', function() {
