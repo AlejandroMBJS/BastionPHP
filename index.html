@@ -804,6 +804,7 @@
           <li><a href="#deployment">Deployment</a></li>
           <li><a href="#multi-plant-deployment">Multi-Plant Deployment</a></li>
           <li><a href="#examples">Examples</a></li>
+          <li><a href="#components">Components & HTMX</a></li>
         </ul>
       </aside>
 
@@ -3081,7 +3082,117 @@ $totalPages = ceil($total / $perPage);
     &lt;a href="?page=&lt;?= $page + 1 ?&gt;"&gt;Next&lt;/a&gt;
 &lt;?php endif; ?&gt;</code></pre>
         </section>
+<section id="components" class="section">
+          <h2>Components & HTMX</h2>
 
+          <div class="highlight">
+            <strong>Modern Architecture:</strong> Bastion PHP encourages using <strong>Functional Components</strong>
+            instead of complex template engines. Combine PHP functions with Heredoc syntax and HTMX for a React-like
+            experience with zero build steps.
+          </div>
+
+          <h3>1. Creating a Component</h3>
+          <p>Instead of scattering HTML snippets, define reusable UI elements as standard PHP functions. Store them in a
+            <code>components/</code> folder.</p>
+
+          <pre><code>&lt;?php
+// app/components/UserCard.php
+
+function UserCard($user) {
+    // 1. Security: Always escape output
+    $name = e($user['name']);
+    $email = e($user['email']);
+    $id = $user['id'];
+    
+    // 2. Return HTML using Heredoc
+    // Note: Tailwind classes work automatically via Global Styling
+    return &lt;&lt;&lt;HTML
+    &lt;div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-4" id="user-$id"&gt;
+        &lt;div class="flex justify-between items-center"&gt;
+            &lt;div&gt;
+                &lt;h3 class="font-bold text-lg text-gray-900 dark:text-white"&gt;$name&lt;/h3&gt;
+                &lt;p class="text-sm text-gray-500"&gt;$email&lt;/p&gt;
+            &lt;/div&gt;
+            
+            &lt;!-- HTMX Interaction --&gt;
+            &lt;button 
+                hx-delete="/api/users/$id"
+                hx-target="#user-$id"
+                hx-swap="outerHTML"
+                hx-confirm="Are you sure?"
+                class="text-red-500 hover:text-red-700 font-medium text-sm transition-colors"&gt;
+                Delete
+            &lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    HTML;
+}
+?&gt;</code></pre>
+
+          <h3>2. Using Components in Pages</h3>
+          <p>Import your component and call it like a function within your route files.</p>
+
+          <pre><code>&lt;?php
+// app/users/page.php
+
+require_once __DIR__ . '/../components/UserCard.php';
+use App\Models\User;
+
+$users = User::all();
+$title = 'User Directory';
+?&gt;
+
+&lt;div class="max-w-2xl mx-auto py-8"&gt;
+    &lt;h1 class="text-3xl font-bold mb-6"&gt;Users&lt;/h1&gt;
+    
+    &lt;div class="grid gap-4"&gt;
+        &lt;?php foreach ($users as $user): ?&gt;
+            &lt;!-- Render Component --&gt;
+            &lt;?= UserCard($user) ?&gt;
+        &lt;?php endforeach; ?&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+          <h3>3. Handling HTMX Actions</h3>
+          <p>Create an API endpoint to handle the interaction. For a generic delete action, return an empty 200 OK
+            response to remove the element from the DOM.</p>
+
+          <pre><code>&lt;?php
+// app/api/users/[id]/+server.php
+
+use App\Models\User;
+use App\Core\Response;
+
+return [
+    'delete' => function($req) {
+        $id = $req->meta['params']['id'];
+        
+        // Perform logic
+        User::delete($id);
+        
+        // HTMX Magic:
+        // Returning 200 OK with empty body removes the target element
+        http_response_code(200);
+        echo ""; 
+        exit;
+    }
+];</code></pre>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <h4>🚀 Performance</h4>
+              <p>PHP strings are faster than compiling Blade/Twig templates.</p>
+            </div>
+            <div class="feature-card">
+              <h4>🧩 Composition</h4>
+              <p>Nest components easily: <code>&lt;?= Card(Button('Click')) ?&gt;</code></p>
+            </div>
+            <div class="feature-card">
+              <h4>🛡️ Security</h4>
+              <p>Forces explicit use of the <code>e()</code> helper, preventing accidental XSS.</p>
+            </div>
+          </div>
+        </section>
         <footer>
           <p><strong>Bastion PHP Framework</strong> — Version 2.1.0 (Security Enhanced)</p>
           <p>Enterprise-grade standardized PHP framework with modern developer experience</p>
