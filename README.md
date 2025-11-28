@@ -31,6 +31,7 @@
 - [Middleware](#middleware)
 - [Database](#database)
 - [Helper Functions Reference](#helper-functions-reference)
+- [Components & HTMX](#components--htmx)
 - [CLI Commands](#cli-commands)
 - [Security](#security)
 - [Performance](#performance)
@@ -1909,6 +1910,105 @@ $fallbackPath = config('style.fallbackCss');
 ```
 
 ---
+## Components & HTMX
+
+> **Modern Architecture:** Bastion PHP encourages using **Functional Components** instead of complex template engines. Combine PHP functions with Heredoc syntax and HTMX for a React-like experience with zero build steps.
+
+### 1. Creating a Component
+
+Instead of scattering HTML snippets, define reusable UI elements as standard PHP functions. Store them in a `app/components/` folder (you may need to create this folder).
+
+```php
+<?php
+// app/components/UserCard.php
+
+function UserCard($user) {
+    // 1. Security: Always escape output with the global e() helper
+    $name = e($user['name']);
+    $email = e($user['email']);
+    $id = $user['id'];
+    
+    // 2. Return HTML using Heredoc
+    // Note: Tailwind classes work automatically via Global Styling
+    return <<<HTML
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-4" id="user-$id">
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="font-bold text-lg text-gray-900 dark:text-white">$name</h3>
+                <p class="text-sm text-gray-500">$email</p>
+            </div>
+            
+            <button 
+                hx-delete="/api/users/$id"
+                hx-target="#user-$id"
+                hx-swap="outerHTML"
+                hx-confirm="Are you sure?"
+                class="text-red-500 hover:text-red-700 font-medium text-sm transition-colors">
+                Delete
+            </button>
+        </div>
+    </div>
+    HTML;
+}
+2. Using Components in Pages
+Import your component and call it like a function within your route files.
+
+PHP
+
+<?php
+// app/users/page.php
+
+require_once __DIR__ . '/../components/UserCard.php';
+use App\Models\User;
+
+$users = User::all();
+$title = 'User Directory';
+?>
+
+<div class="max-w-2xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">Users</h1>
+    
+    <div class="grid gap-4">
+        <?php foreach ($users as $user): ?>
+            <?= UserCard($user) ?>
+        <?php endforeach; ?>
+    </div>
+</div>
+3. Handling HTMX Actions
+Create an API endpoint using +server.php to handle the interaction. For a generic delete action, return an empty 200 OK response to remove the element from the DOM.
+
+PHP
+
+<?php
+// app/api/users/[id]/+server.php
+
+use App\Models\User;
+use App\Core\Response;
+
+return [
+    'delete' => function($req) {
+        $id = $req->meta['params']['id'];
+        
+        // Perform database logic
+        User::delete($id);
+        
+        // HTMX Magic:
+        // Returning 200 OK with empty body removes the target element
+        http_response_code(200);
+        echo ""; 
+        exit;
+    }
+];
+Why use this approach?
+🚀 Performance: PHP strings are significantly faster than compiling Blade/Twig templates.
+
+🧩 Composition: Nest components easily: <?= Card(Button('Click')) ?>.
+
+🛡️ Security: Forces explicit use of the e() helper, preventing accidental XSS.
+
+📉 No Build Step: Unlike React/Vue, you don't need Webpack or Vite to compile components.
+
+---
 
 ## CLI Commands
 
@@ -2375,7 +2475,7 @@ php test_all_features.php
 
 | Metric | Value |
 |--------|-------|
-| Framework Version | 2.1.0 |
+| Framework Version | 0.1.0 |
 | PHP Version | 8.4.14 |
 | Total Tests | 36 |
 | Passed | 28 ✅ |
